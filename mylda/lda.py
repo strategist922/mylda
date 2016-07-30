@@ -6,7 +6,7 @@ from nltk.tokenize import RegexpTokenizer
 from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 
-from .settings import alpha, beta, K, dict_file as default_dict, iter_max
+from .settings import alpha, beta, K, iter_max, dict_file as default_dict
 from .utils import n2s
 from .sample import _sample
 
@@ -117,7 +117,7 @@ class LDA:
     """A collapsed gibbs-sampling based implementation of LDA model."""
 
     def __init__(self, K=K, alpha=alpha, beta=beta, n_early_stop=10,
-                 iter_max=iter_max, dict_file=None, use_common_dict=False,
+                 iter_max=iter_max, dict_file=None, use_default_dict=False,
                  dictionary=None):
         self.K = K
         self.alpha = alpha
@@ -126,7 +126,7 @@ class LDA:
         self.iter_max = iter_max
         self.dict_file = dict_file
         self.dictionary = dictionary
-        if use_common_dict:
+        if use_default_dict:
             self.dict_file = default_dict
 
     def _load_data(self, n_mt=None, content_list=None, tokenid_list=None,
