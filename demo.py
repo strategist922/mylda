@@ -4,7 +4,7 @@ from mylda import LDA, demo_dataset_dir
 
 filenames = [os.path.join(demo_dataset_dir, x)
              for x in os.listdir(demo_dataset_dir)]
-documents = [open(x).read() for x in filenames]
+documents = [open(x, encoding="utf8").read() for x in filenames]
 
 # Generate corpus-based dictionary
 lda_model = LDA(K=5, n_early_stop=20)
