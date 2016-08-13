@@ -216,7 +216,7 @@ class LDA:
             max_dict_len=None, stem=False):
         if isinstance(inputData, np.ndarray):
             self._load_data(n_mt=inputData)
-        elif isinstance(inputData[0][0], int):
+        elif isinstance(inputData[0][0], (int, np.int32, np.int64)):
             self._load_data(tokenid_list=inputData)
         elif isinstance(inputData[0][0], str):
             self._load_data(content_list=inputData, min_tf=min_tf,
