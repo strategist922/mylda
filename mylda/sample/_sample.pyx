@@ -81,3 +81,56 @@ cdef _sample_topic(int[:,:] n_mk, int[:,:] n_kt, int[:] n_kt_sum,
         return 1
     else:
         return 0
+
+
+cdef _predict_word(double[:,:] phi, int[:] doc, int[:] n_z, int n, int N,
+                   double alpha, double *theta_estimate, double *pval):
+    cdef:
+        int k, t, z
+        int w_i = doc[n]
+        int K = phi.shape[0]
+        int T = phi.shape[1]
+        double cum = N + K * alpha
+
+    cum = N + K * alpha
+    for k in range(K):
+        theta_estimate[k] = (n_z[k] + alpha) / cum
+        pval[k] = theta_estimate[k] * phi[k, w_i]
+
+    cum = 0
+    for k in range(K):
+        cum += pval[k]
+    for k in range(K):
+        pval[k] /= cum
+
+    cum = <double>rand() / <double>RAND_MAX
+
+    z = K - 1
+    for k in range(K):
+        cum -= pval[k]
+        if cum < 0:
+            z = k
+            break
+    return z
+
+
+cpdef _predict(double[:,:] phi, int[:] doc, int[:] z, int[:] n_z, double alpha):
+    cdef:
+        int n, z_i_old, z_i_new
+        int N = len(doc)
+        int K = phi.shape[0]
+        double *theta_estimate = <double *>malloc(K*sizeof(double))
+        double *pval = <double *>malloc(K*sizeof(double))
+
+    for n in range(N):
+        z_i_old = z[n]
+        dec(n_z[z_i_old])
+        z_i_new = _predict_word(phi, doc, n_z, n, N, alpha,
+                                theta_estimate, pval)
+        inc(n_z[z_i_new])
+        z[n] = z_i_new
+
+    free(theta_estimate)
+    free(pval)
+    return z
+
