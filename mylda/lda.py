@@ -214,9 +214,9 @@ class LDA:
 
     def fit(self, inputData, min_tf=10, min_df=None,
             max_dict_len=None, stem=False):
-        if isinstance(inputData, np.ndarray):
+        if isinstance(inputData, np.ndarray) and len(inputData.shape) > 1:
             self._load_data(n_mt=inputData)
-        elif isinstance(inputData[0][0], (int, np.int32, np.int64)):
+        elif isinstance(inputData[0][0], (int, np.integer)):
             self._load_data(tokenid_list=inputData)
         elif isinstance(inputData[0][0], str):
             self._load_data(content_list=inputData, min_tf=min_tf,
