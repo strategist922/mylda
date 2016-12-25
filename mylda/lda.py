@@ -14,8 +14,8 @@ from .sample import _sample
 class Dictionary:
     """Dictionary used to map word to token id or conversely."""
 
-    def __init__(self, corpus=None, dict_file=None, min_tf=None,
-                 min_df=None, max_dict_len=None, stem=False):
+    def __init__(self, corpus=None, dict_file=None, token_list=None,
+                 min_tf=None, min_df=None, max_dict_len=None, stem=False):
         """Pass corpus as a sequence of list consisting of words, or a
         dict_file in which a line contains a single word, or a list of
         tokens."""
@@ -211,6 +211,12 @@ class LDA:
             self.I_m[m] = n1
             n1 = n2
         self.n_kt_sum = np.sum(self.n_kt, axis=1, dtype=np.int32)
+
+    def _phi(self):
+        """return the infered topics 'phi'. """
+        smoothed = self.n_kt + self.beta
+        phi = smoothed / np.c_[smoothed.sum(axis=1)]
+        return phi
 
     def fit(self, inputData, min_tf=10, min_df=None,
             max_dict_len=None, stem=False):
